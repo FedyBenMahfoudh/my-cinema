@@ -1,14 +1,27 @@
-import type { Movie } from '../types';
+import { useNavigate } from "react-router";
+import type { Movie } from "../types";
 
 const MovieCard = ({ movie }: { movie: Movie }) => {
-
-  const { title, vote_average, poster_path, release_date, original_language } = movie;
-  
+  const {
+    id,
+    title,
+    vote_average,
+    poster_path,
+    release_date,
+    original_language,
+  } = movie;
+  const navigate = useNavigate();
   return (
-    <div className="movie-card">
+    <div
+      className="movie-card hover:cursor-pointer hover:scale-105 transition-transform"
+      onClick={() => navigate(`/movie/${id}`)}
+    >
       <img
-        src={poster_path ?
-          `https://image.tmdb.org/t/p/w500/${poster_path}` : '/no-movie.png'}
+        src={
+          poster_path
+            ? `https://image.tmdb.org/t/p/w500/${poster_path}`
+            : "/no-movie.png"
+        }
         alt={title}
       />
 
@@ -18,7 +31,7 @@ const MovieCard = ({ movie }: { movie: Movie }) => {
         <div className="content">
           <div className="rating">
             <img src="star.svg" alt="Star Icon" />
-            <p>{vote_average ? vote_average.toFixed(1) : 'N/A'}</p>
+            <p>{vote_average ? vote_average.toFixed(1) : "N/A"}</p>
           </div>
 
           <span>•</span>
@@ -26,11 +39,11 @@ const MovieCard = ({ movie }: { movie: Movie }) => {
 
           <span>•</span>
           <p className="year">
-            {release_date ? release_date.split('-')[0] : 'N/A'}
+            {release_date ? release_date.split("-")[0] : "N/A"}
           </p>
         </div>
       </div>
     </div>
-  )
-}
-export default MovieCard
+  );
+};
+export default MovieCard;
