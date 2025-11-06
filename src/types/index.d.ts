@@ -5,4 +5,10 @@ export interface Movie {
     poster_path: string;
     release_date: string;
     original_language: string;
+    adult: boolean;
+    backdrop_path: string;
+    genre_ids: number[];
+    overview: string;
+    popularity: number;
+    video: boolean;
 }
