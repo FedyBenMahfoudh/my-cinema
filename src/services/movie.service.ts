@@ -36,3 +36,19 @@ export const getMovieById = async (id: string): Promise<MovieDetail> => {
   }
   return data;
 };
+
+
+export const getUpcomingMovies = async () => {
+    const endpoint = IMDB_API.API_BASE_URL + `/movie/upcoming`;
+
+    const response = await fetch(endpoint, API_OPTIONS);
+    if (!response.ok) {
+        throw new Error("Failed to fetch upcoming movies");
+    }
+
+    const data = await response.json();
+    if (data.Response === "False") {
+        throw new Error(data.Error || "No upcoming movies found");
+    }
+    return data.results;
+}
