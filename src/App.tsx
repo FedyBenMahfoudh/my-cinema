@@ -3,17 +3,23 @@ import type { Movie } from "./types";
 import { getMovies } from "./services/movie.service";
 import Spinner from "./components/Spinner";
 import MovieCard from "./components/MovieCard";
+import Search from "./components/Search";
+import { useDebounce } from "react-use";
 
 function App() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [movies, setMovies] = useState<Movie[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+
+  useDebounce(() => setDebouncedSearchTerm(searchTerm), 500, [searchTerm]);
+
   useEffect(() => {
-    const fetchMovies = async () => {
+    const fetchMovies = async (query: string = "") => {
       setIsLoading(true);
       try {
-        const fetchedMovies = await getMovies(searchTerm);
+        const fetchedMovies = await getMovies(query);
         if (fetchedMovies) {
           setMovies(fetchedMovies);
         } else {
@@ -28,8 +34,8 @@ function App() {
         setIsLoading(false);
       }
     };
-    fetchMovies();
-  }, [searchTerm]);
+    fetchMovies(debouncedSearchTerm);
+  }, [debouncedSearchTerm]);
 
   return (
     <main>
@@ -44,6 +50,7 @@ function App() {
           </h1>
 
           {/* Search Bar */}
+          <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         </header>
 
         <section className="all-movies">
@@ -52,15 +59,23 @@ function App() {
           {/* Movie List */}
 
           {isLoading ? (
-            <Spinner />
+            <div className="flex justify-center items-center min-h-[200px]">
+              <Spinner />
+            </div>
           ) : errorMessage ? (
             <p className="text-red-500">{errorMessage}</p>
-          ) : (
+          ) : movies.length ? (
             <ul>
               {movies.map((movie) => (
                 <MovieCard key={movie.id} movie={movie} />
               ))}
             </ul>
+          ) : (
+            <div className="flex justify-center items-center min-h-[200px]">
+              <h2 className="text-gradient text-shadow-white">
+                No movies found with name "{debouncedSearchTerm}"
+              </h2>
+            </div>
           )}
         </section>
       </div>
